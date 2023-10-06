@@ -1,42 +1,64 @@
-import React, { useRef, useState } from "react";
-import RenderCount from "./RenderTragger";
+import React, { memo, useCallback, useMemo, useRef, useState } from "react";
+import AppCard from "./components/AppCard";
+import RenderCount from "./components/RenderTragger";
+import AppInput from "./components/AppInput";
 
 type DataProps = { name: string; id: number };
-const App: React.FC = () => {
-  // const [name, setName] = useState<string>("");
+type AppCardWrapperProps={
+  it:DataProps,
+  setData:React.Dispatch<React.SetStateAction<DataProps[]>>
+}
+const AppCardWrapper=memo(function AppCardWrapper({it,setData}:AppCardWrapperProps){
+ return <div>
+  <AppCard text={it.name} id={it.id} setData={setData}/>
+  <RenderCount page="AppCardWrapper" />
+</div>
+})
+
+const TodoPage: React.FC = () => {
   const [data, setData] = useState<DataProps[]>([]);
 
   const refVal = useRef<HTMLInputElement>(null);
 
-  const handleData = () => {
-    setData([
-      ...data,
-      {
-        name: refVal.current?.value || "",
-        id: Date.now(),
-      },
-    ]);
+  const handleData = useCallback((): void => {
+    if (!refVal.current?.value) return;
     if (refVal.current) {
+      const newName = refVal.current.value || "";
+      const newId = Date.now();
+
+      setData((prevData) => [...prevData, { name: newName, id: newId }]);
       refVal.current.value = "";
     }
-    // setName("");
-  };
+  }, []);
 
+  // const handleDelete = useCallback((id: number): void => {
+  //   setData((prevData) => prevData.filter((it: DataProps) => it.id !== id));
+  // }, []);
+
+
+
+  // const appCardComponents = useMemo(
+  //   () =>
+  //     data.map((it) => (
+  //       <AppCard key={it.id} id={it.id} setData={setData} text={it.name} />
+  //     //  <AppCardWrapper key={it.id} setData={setData} it={it}/>
+  //     )),
+  //   [data]
+  // );
   return (
-    <div>
-      {data.map((it) => {
-        return <p key={it.id}>{it.name}</p>;
-      })}
-      <input
-        type="text"
-        // value={name}
-        ref={refVal}
-        // onChange={(e) => setName(e.target.value)}
-      />
-      <RenderCount />
+    <div className="relative">
+      {/* {appCardComponents} */}
+      {
+         data.map((it) => (
+                <AppCard key={it.id} id={it.id} setData={setData} text={it.name} />
+                // <AppCardWrapper key={it.id} setData={setData} it={it}/>
+               ))
+      }
+      {/* <AppTodo data={data} handleDelete={handleDelete} /> */}
+      <AppInput type="text" ref={refVal} className="border rounded-md" />
       <button onClick={handleData}>Add</button>
     </div>
   );
 };
 
-export default App;
+export default memo(TodoPage);
