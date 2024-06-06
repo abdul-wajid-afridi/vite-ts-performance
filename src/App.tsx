@@ -61,7 +61,7 @@ const TodoPage = memo(() => {
       )}
       {/* <AppTodo data={data} handleDelete={handleDelete} /> */}
       <AppInput type="text" ref={refVal} className="border rounded-md" />
-      <button onClick={handleData}>Add</button>
+      <button onClick={handleData}>Add2</button>
       <RenderCount color="red" page="Innnermain" />
     </div>
   );
