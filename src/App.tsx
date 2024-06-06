@@ -4,18 +4,23 @@ import RenderCount from "./components/RenderTragger";
 import AppInput from "./components/AppInput";
 
 type DataProps = { name: string; id: number };
-type AppCardWrapperProps={
-  it:DataProps,
-  setData:React.Dispatch<React.SetStateAction<DataProps[]>>
-}
-const AppCardWrapper=memo(function AppCardWrapper({it,setData}:AppCardWrapperProps){
- return <div>
-  <AppCard text={it.name} id={it.id} setData={setData}/>
-  <RenderCount page="AppCardWrapper" />
-</div>
-})
+type AppCardWrapperProps = {
+  it: DataProps;
+  setData: React.Dispatch<React.SetStateAction<DataProps[]>>;
+};
+const AppCardWrapper = memo(function AppCardWrapper({
+  it,
+  setData,
+}: AppCardWrapperProps) {
+  return (
+    <div>
+      <AppCard text={it.name} id={it.id} setData={setData} />
+      <RenderCount page="AppCardWrapper" />
+    </div>
+  );
+});
 
-const TodoPage: React.FC = () => {
+const TodoPage = memo(() => {
   const [data, setData] = useState<DataProps[]>([]);
 
   const refVal = useRef<HTMLInputElement>(null);
@@ -29,13 +34,11 @@ const TodoPage: React.FC = () => {
       setData((prevData) => [...prevData, { name: newName, id: newId }]);
       refVal.current.value = "";
     }
-  }, []);
+  }, [refVal.current]);
 
   // const handleDelete = useCallback((id: number): void => {
   //   setData((prevData) => prevData.filter((it: DataProps) => it.id !== id));
   // }, []);
-
-
 
   // const appCardComponents = useMemo(
   //   () =>
@@ -48,17 +51,20 @@ const TodoPage: React.FC = () => {
   return (
     <div className="relative">
       {/* {appCardComponents} */}
-      {
-         data.map((it) => (
-                <AppCard key={it.id} id={it.id} setData={setData} text={it.name} />
-                // <AppCardWrapper key={it.id} setData={setData} it={it}/>
-               ))
-      }
+      {useMemo(
+        () =>
+          data.map((it) => (
+            <AppCard key={it.id} id={it.id} setData={setData} text={it.name} />
+            // <AppCardWrapper key={it.id} setData={setData} it={it}/>
+          )),
+        [data]
+      )}
       {/* <AppTodo data={data} handleDelete={handleDelete} /> */}
       <AppInput type="text" ref={refVal} className="border rounded-md" />
       <button onClick={handleData}>Add</button>
+      <RenderCount color="red" page="Innnermain" />
     </div>
   );
-};
+});
 
-export default memo(TodoPage);
+export default TodoPage;
