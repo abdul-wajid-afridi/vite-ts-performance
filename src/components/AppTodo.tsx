@@ -22,3 +22,10 @@
 // };
 
 // export default memo(AppTodo);
+import React from "react";
+
+const AppTodo = () => {
+  return <div>AppTodo</div>;
+};
+
+export default AppTodo;
